@@ -376,7 +376,7 @@
   <xsheet>
     <columns>
       <soundColumn id='12'>
-        0.4 1 
+        1.0 1 
         <SoundCells>
           0 0 0 <soundLevel id='11'/>
         </SoundCells>
