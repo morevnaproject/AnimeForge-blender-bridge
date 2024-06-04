@@ -6,9 +6,9 @@ import platform
 import subprocess
 
 bl_info = {
-    "name": "Render frames",
-    "author": "dmitry sysoev",
-    "version": (0, 1),
+    "name": "Anime Forge Blender Bridge",
+    "author": "Konstantin Dmitriev, Dmitry Sysoev",
+    "version": (0, 2),
     "blender": (2, 80, 0),
     "category": "Import-Export"
 }
@@ -99,10 +99,13 @@ def main(context):
     shutil.copy2(os.path.join(templates_directory, curent_template, "inputs", "scenes.xml"), os.path.join(working_directory_shots, scenes, "inputs", "scenes.xml"))
     shutil.copy2(os.path.join(templates_directory, curent_template, "scripts", "scenes.xml"), os.path.join(working_directory_shots, scenes, "scripts", "scenes.xml"))
 
+    channel=1
     for i in bpy.data.scenes['Scene'].sequence_editor.sequences:
         if i.select:
             first_frame.append(i.frame_final_start)
             last_frame.append(i.frame_final_end)
+            if channel<i.channel:
+                channel=i.channel
                 
     first_frame.sort()
     last_frame.sort()
@@ -141,7 +144,29 @@ def main(context):
     bpy.context.scene.frame_end = end
     bpy.context.scene.render.filepath = output
     bpy.context.scene.render.fps = fps
-
+    
+    frames = []
+    for frame in range(1, last_frame-first_frame + 2):
+        frames.append({"name":f"main.{frame:04d}.tif"})
+    
+    override_context = bpy.context.copy()
+    area = [area for area in bpy.context.screen.areas if area.type == "SEQUENCE_EDITOR"][0]
+    override_context['window'] = bpy.context.window
+    override_context['screen'] = bpy.context.screen
+    override_context['area'] = area
+    override_context['region'] = area.regions[-1]
+    override_context['scene'] = bpy.context.scene
+    override_context['space_data'] = area.spaces.active
+    
+    bpy.ops.sequencer.image_strip_add(
+		override_context,
+		directory=os.path.join(working_directory_shots, scenes, "render"),
+		files=frames,
+		frame_start=first_frame,
+		channel=channel,
+		use_placeholders=True
+	)
+    
     if platform.system() == "Linux":
        subprocess.Popen([r'opentoonz', '{}/main.tnz'.format(os.path.join(working_directory_shots, scenes))])
     elif platform.system() == "Darwin":
