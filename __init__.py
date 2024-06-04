@@ -123,18 +123,17 @@ def main(context):
     
     with open(os.path.join(working_directory_shots, scenes, "main.tnz"), "r") as file:
             data = file.readlines()
-            for i in data:
-                if re.match("          24", i):
-                    index = data.index(i)
-                    i = i.replace("24", str(fps))
-                    data[index] = i
+            for line_number in range(len(data)):
+                line = data[line_number]
+                if re.match("          24", line):
+                    line = line.replace("24", str(fps))
+                    data[line_number] = line
                         
-                if re.search("0 59 <level id='1'/>0001 1", i):
-                    index = data.index(i)
-                    i = i.replace("59", str(last_frame-first_frame + 1))
-                    i = i.replace("0001", "{0:04d}".format(first_frame))
-                    data[index] = i
-                    break
+                if re.search("0 59 <level id='1'/>0001 1", line):
+                    line = line.replace("59", str(last_frame-first_frame + 1))
+                    line = line.replace("0001", "{0:04d}".format(first_frame))
+                    data[line_number] = line
+
                     
     with open(os.path.join(working_directory_shots, scenes, "main.tnz"), "w") as file:
             new_file = file.writelines(data)
