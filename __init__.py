@@ -126,7 +126,10 @@ def main(context):
             for line_number in range(len(data)):
                 line = data[line_number]
                 if re.search("<fps>", line):
-                    data[line_number+1] = data[line_number+1].replace("24", str(fps))
+                    data[line_number+1] = data[line_number+1].replace("24", str(fps)) + "\n"
+                if re.search("<tnz framecount=", line):
+                    line = line.replace("framecount=\"59\"", "framecount=\""+str(last_frame-first_frame+1)+"\"")
+                    data[line_number] = line
                 
                 if re.search("<cameraRes>", line):
                     data[line_number+1] = str(bpy.context.scene.render.resolution_x) + " " + str(bpy.context.scene.render.resolution_y)
