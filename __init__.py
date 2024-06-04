@@ -125,9 +125,8 @@ def main(context):
             data = file.readlines()
             for line_number in range(len(data)):
                 line = data[line_number]
-                if re.match("          24", line):
-                    line = line.replace("24", str(fps))
-                    data[line_number] = line
+                if re.search("<fps>", line):
+                    data[line_number+1] = data[line_number+1].replace("24", str(fps))
                         
                 if re.search("0 59 <level id='1'/>0001 1", line):
                     line = line.replace("59", str(last_frame-first_frame + 1))
