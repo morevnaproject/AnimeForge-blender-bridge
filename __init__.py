@@ -127,6 +127,11 @@ def main(context):
                 line = data[line_number]
                 if re.search("<fps>", line):
                     data[line_number+1] = data[line_number+1].replace("24", str(fps))
+                
+                if re.search("<cameraRes>", line):
+                    data[line_number+1] = str(bpy.context.scene.render.resolution_x) + " " + str(bpy.context.scene.render.resolution_y)
+                if re.search("<cameraSize>", line):
+                    data[line_number+1] = str(float(bpy.context.scene.render.resolution_x)/120) + " " + str(float(bpy.context.scene.render.resolution_y)/120) + "\n"
                         
                 if re.search("0 59 <level id='1'/>0001 1", line):
                     line = line.replace("59", str(last_frame-first_frame + 1))
