@@ -1,1 +1,1 @@
-# Render_pieces-blender-addon
+# Anime Forge addon for Blender
