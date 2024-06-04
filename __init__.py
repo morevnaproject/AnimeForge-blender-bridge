@@ -131,7 +131,7 @@ def main(context):
                         
                 if re.search("0 59 <level id='1'/>0001 1", i):
                     index = data.index(i)
-                    i = i.replace("59", str(last_frame-first_frame))
+                    i = i.replace("59", str(last_frame-first_frame + 1))
                     i = i.replace("0001", "{0:04d}".format(first_frame))
                     data[index] = i
                     break
